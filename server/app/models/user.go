@@ -4,12 +4,11 @@ import (
     "errors"
     "os"
 
+    "go-auth-with-crud-api/server/utils"
+
     "github.com/dgrijalva/jwt-go"
     "github.com/jinzhu/gorm"
     "golang.org/x/crypto/bcrypt"
-
-    // load the database connection.
-    "go-auth-with-crud-api/server/utils"
 )
 
 var (

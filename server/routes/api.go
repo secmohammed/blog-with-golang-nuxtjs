@@ -16,10 +16,11 @@ func RegisterAPIRoutes() {
     router := mux.NewRouter()
     // auth routes.
     userGuestArea := router.PathPrefix("/api/auth").Subrouter()
+    userGuestArea.Use(middlewares.Guest)
     userGuestArea.HandleFunc("/register", users.ParseRegisterForm).Methods("POST")
     userGuestArea.HandleFunc("/login", users.ParseLoginForm).Methods("POST")
     userAuthArea := router.PathPrefix("/api/auth").Subrouter()
-    userAuthArea.Use(middlewares.RedirectIfAuthenticated)
+    userAuthArea.Use(middlewares.Authenticate)
     userAuthArea.HandleFunc("/user", users.GetAuthenticatedUser).Methods("GET")
     http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("APP_PORT")), router)
 
