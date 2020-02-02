@@ -1,0 +1,17 @@
+*.o
+*.a
+*.so
+.env
+# Folders
+_obj
+_test
+
+# Architecture specific extensions/prefixes
+**/tmp/*
+*.cgo1.go
+*.cgo.c
+*.exe
+*.test
+*.prof
+.DS_Store
+
