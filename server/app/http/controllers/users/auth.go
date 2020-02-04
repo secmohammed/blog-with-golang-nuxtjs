@@ -2,6 +2,7 @@ package users
 
 import (
     "encoding/json"
+    "fmt"
     "net/http"
 
     "go-auth-with-crud-api/server/app/http/requests"
@@ -68,7 +69,9 @@ func ParseRegisterForm(w http.ResponseWriter, r *http.Request) {
         return
     }
     messages, status := requests.IsSubmittedRegisterFormValid(user)
+    fmt.Println(messages, status)
     if !status {
+        w.WriteHeader(422)
         utils.Respond(w, messages)
         return
     }

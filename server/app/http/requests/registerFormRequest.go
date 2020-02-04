@@ -20,8 +20,8 @@ func IsSubmittedRegisterFormValid(user *models.User) (map[string]interface{}, bo
     }
 
     //Email must be unique
-    foundUser, _ := models.ByEmail(user.Email)
-    if foundUser.Email != "" {
+    _, err := models.ByEmail(user.Email)
+    if err == nil {
         return utils.Message(false, "Email address already in use by another user."), false
     }
 
