@@ -27,7 +27,17 @@ export default {
   /*
   ** Plugins to load before mounting the App
   */
+  toast: {
+    position: 'top-right',
+    duration: 800,
+  },
   plugins: [
+    './plugins/mixins/user.js',
+    './plugins/axios.js',
+    {
+      src: './plugins/vee-validate.js',
+      ssr: true
+    }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -42,6 +52,7 @@ export default {
     '@nuxtjs/bulma',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    "@nuxtjs/toast",
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
   ],
@@ -49,7 +60,39 @@ export default {
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
-  axios: {
+   axios: {
+    baseURL: 'http://localhost:8000/api/',
+    proxy: true,
+    redirectError: {
+      401: '/auth/login',
+      500: '/'
+    },
+  },
+  auth: {
+    redirect: {
+      login: '/auth/login'
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '/auth/login',
+            method: 'post',
+            propertyName: false
+          },
+          user: {
+            url: '/user',
+            method: 'get',
+            propertyName: 'data'
+          },
+          logout: {
+            url: '/auth/logout',
+            method: 'post',
+            propertyName: 'data'
+          },
+        }
+      }
+    }
   },
   /*
   ** Build configuration

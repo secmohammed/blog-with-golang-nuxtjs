@@ -27,12 +27,16 @@ func ParseLoginForm(w http.ResponseWriter, r *http.Request) {
     if err != nil {
         switch err {
         case models.ErrorNotFound:
+            w.WriteHeader(422)
             utils.Respond(w, utils.Message(false, "Invalid Email address"))
             break
         case models.ErrorInvalidPassword:
+            w.WriteHeader(422)
+
             utils.Respond(w, utils.Message(false, "Invalid password"))
             break
         default:
+            w.WriteHeader(422)
             utils.Respond(w, utils.Message(false, err.Error()))
             break
         }

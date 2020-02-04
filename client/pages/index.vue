@@ -9,13 +9,9 @@
         My brilliant Nuxt.js project
       </h2>
       <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
+        <nuxt-link :to="{name: 'auth-login'}">
+          Login
+        </nuxt-link>
         <a
           href="https://github.com/nuxt/nuxt.js"
           target="_blank"

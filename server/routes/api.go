@@ -9,6 +9,7 @@ import (
     "go-auth-with-crud-api/server/app/http/middlewares"
 
     "github.com/gorilla/mux"
+    "github.com/rs/cors"
 )
 
 // RegisterAPIRoutes is used to register the routes we need for the web application.
@@ -22,6 +23,8 @@ func RegisterAPIRoutes() {
     userAuthArea := router.PathPrefix("/api/auth").Subrouter()
     userAuthArea.Use(middlewares.Authenticate)
     userAuthArea.HandleFunc("/user", users.GetAuthenticatedUser).Methods("GET")
-    http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("APP_PORT")), router)
+    handler := cors.Default().Handler(router)
+
+    http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("APP_PORT")), handler)
 
 }
