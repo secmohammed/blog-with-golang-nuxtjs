@@ -11,7 +11,6 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxtjs/auth": "^4.8.5",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/bulma": "^1.2.1",
     "@nuxtjs/dotenv": "^1.4.0",
@@ -19,7 +18,7 @@
     "lodash": "^4.17.15",
     "nuxt": "^2.0.0",
     "query-string": "^6.10.1",
-    "vee-validate": "^3.2.3"
+    "vee-validate": "^2.1.7"
   },
   "devDependencies": {}
 }

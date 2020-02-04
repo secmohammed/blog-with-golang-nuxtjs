@@ -1,4 +1,4 @@
-
+require('dotenv').config()
 export default {
   mode: 'universal',
   /*
@@ -34,10 +34,7 @@ export default {
   plugins: [
     './plugins/mixins/user.js',
     './plugins/axios.js',
-    {
-      src: './plugins/vee-validate.js',
-      ssr: true
-    }
+    { src: './plugins/vee-validate.js', ssr: true}
   ],
   /*
   ** Nuxt.js dev-modules
@@ -51,7 +48,9 @@ export default {
     // Doc: https://github.com/nuxt-community/modules/tree/master/packages/bulma
     '@nuxtjs/bulma',
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios',
+    ['@nuxtjs/axios', {
+      baseURL: 'http://localhost:8000/api/'
+    }],
     "@nuxtjs/toast",
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
@@ -61,43 +60,19 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
    axios: {
-    baseURL: 'http://localhost:8000/api/',
+    baseURL: "http://localhost:8000/api",
     proxy: true,
     redirectError: {
       401: '/auth/login',
       500: '/'
     },
   },
-  auth: {
-    redirect: {
-      login: '/auth/login'
-    },
-    strategies: {
-      local: {
-        endpoints: {
-          login: {
-            url: '/auth/login',
-            method: 'post',
-            propertyName: false
-          },
-          user: {
-            url: '/user',
-            method: 'get',
-            propertyName: 'data'
-          },
-          logout: {
-            url: '/auth/logout',
-            method: 'post',
-            propertyName: 'data'
-          },
-        }
-      }
-    }
-  },
   /*
   ** Build configuration
   */
   build: {
+    vendor: ['vee-validate'],
+
     postcss: {
       preset: {
         features: {

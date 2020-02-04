@@ -22,6 +22,7 @@ export const mutations = {
 export const actions = {
     login({ commit }, payload) {
         return new Promise((resolve, reject) => {
+            console.log(this.$axios.defaults.baseURL)
             this.$axios.$post('http://localhost:8000/api/auth/login', {
                 email: payload.email,
                 password: payload.password
