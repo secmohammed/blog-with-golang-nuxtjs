@@ -2,7 +2,6 @@ package models
 
 import (
     "go-auth-with-crud-api/server/utils"
-    "time"
 
     "github.com/jinzhu/gorm"
 )
@@ -10,9 +9,9 @@ import (
 // Activation type
 type Activation struct {
     gorm.Model
-    UserID      uint       `json:"user_id"`
-    Token       string     `json:"token"`
-    ActivatedAt *time.Time `json:"activated_at"`
+    UserID uint   `json:"user_id"`
+    Token  string `json:"token"`
+    Active bool   `json:"active"; gorm:"default:false"`
 }
 
 // ByUserID function is used to fetch the record by the user id.
@@ -23,6 +22,19 @@ func ByUserID(id uint) (*Activation, error) {
         return nil, err
     }
     return &activation, nil
+}
+
+//Activate function is used to activate the current authenticated user.
+func (user *User) Activate() (*Activation, error) {
+    activation, err := ByUserID(user.ID)
+    if err != nil {
+        return nil, err
+    }
+    db.Model(&activation).Updates(Activation{
+        Token:  "",
+        Active: true,
+    })
+    return activation, nil
 }
 
 //GenerateToken function is used to create a token for the associated user.
