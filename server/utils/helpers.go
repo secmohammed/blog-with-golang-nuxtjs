@@ -1,10 +1,13 @@
 package utils
 
 import (
+    "math/rand"
     "net/http"
 
     "github.com/gorilla/schema"
 )
+
+var pool = "aXn31obYZ"
 
 // Must function is used to parse if there is an error being thrown or not.
 func Must(err error) {
@@ -26,4 +29,13 @@ func ParseForm(r *http.Request, form interface{}) error {
     }
     return nil
 
+}
+
+// GenerateRandomString a random string of A-Z chars with len = l
+func GenerateRandomString(l int) string {
+    bytes := make([]byte, l)
+    for i := 0; i < l; i++ {
+        bytes[i] = pool[rand.Intn(len(pool))]
+    }
+    return string(bytes)
 }

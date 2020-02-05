@@ -34,10 +34,11 @@ type Token struct {
 // User type
 type User struct {
     gorm.Model
-    Name     string `json:"name"`
-    Email    string `json:"email"`
-    Password string `json:"password"`
-    Token    string `json:"token" ;sql:"-"`
+    Name       string `json:"name"`
+    Email      string `json:"email"`
+    Password   string `json:"password"`
+    Token      string `json:"token" ;sql:"-"`
+    Activation Activation
 }
 
 //Create function is used to create a users record

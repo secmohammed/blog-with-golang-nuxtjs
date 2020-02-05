@@ -5,6 +5,7 @@ import (
     "net/http"
 
     "go-auth-with-crud-api/server/app/http/requests"
+    "go-auth-with-crud-api/server/app/mails"
     "go-auth-with-crud-api/server/app/models"
     "go-auth-with-crud-api/server/utils"
 )
@@ -107,6 +108,12 @@ func ParseRegisterForm(w http.ResponseWriter, r *http.Request) {
         return
     }
     user, err = user.Create()
+    activation, err := user.GenerateToken()
+    if err != nil {
+        utils.Respond(w, utils.Message(false, "Couldn't create an activation token, try again."))
+        return
+    }
+    mails.SendActivationMail(user, activation)
     user.Password = ""
     response := utils.Message(true, "Account has been created")
     response["user"] = user
