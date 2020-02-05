@@ -2,6 +2,7 @@ package middlewares
 
 import (
     "context"
+    "fmt"
     "go-auth-with-crud-api/server/app/models"
     u "go-auth-with-crud-api/server/utils"
     "net/http"
@@ -13,12 +14,10 @@ import (
 
 // Authenticate is used to check if user has a valid jwt token or not.
 var Authenticate = func(next http.Handler) http.Handler {
-
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
         response := make(map[string]interface{})
         tokenHeader := r.Header.Get("Authorization") //Grab the token from the header
-
+        fmt.Println("here")
         if tokenHeader == "" { //Token is missing, returns with error code 403 Unauthorized
             response = u.Message(false, "Missing auth token")
             w.WriteHeader(http.StatusForbidden)
@@ -50,7 +49,6 @@ var Authenticate = func(next http.Handler) http.Handler {
             u.Respond(w, response)
             return
         }
-
         if !token.Valid { //Token is invalid, maybe not signed on this server
             response = u.Message(false, "Token is not valid.")
             w.WriteHeader(http.StatusForbidden)

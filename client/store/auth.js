@@ -10,6 +10,9 @@ export const getters = {
 
     user(state) {
       return state.user
+    },
+    token(state) {
+      return state.token
     }
 }
 export const mutations = {
@@ -20,9 +23,13 @@ export const mutations = {
     }
 }
 export const actions = {
+  async changePassword({state}, payload) {
+      const response = await this.$axios.post('auth/change-password', payload)
+      console.log(response)
+  },
   register(_, payload) {
     return new Promise((resolve, reject) => {
-      this.$axios.$post('http://localhost:8000/api/auth/register', {
+      this.$axios.$post('auth/register', {
         email: payload.email,
         password: payload.password,
         name: payload.name
@@ -31,7 +38,7 @@ export const actions = {
   },
   login({ commit }, payload) {
     return new Promise((resolve, reject) => {
-      this.$axios.$post('http://localhost:8000/api/auth/login', {
+      this.$axios.$post('auth/login', {
           email: payload.email,
           password: payload.password
      }).then((res) => {

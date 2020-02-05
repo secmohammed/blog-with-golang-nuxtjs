@@ -48,9 +48,7 @@ export default {
     // Doc: https://github.com/nuxt-community/modules/tree/master/packages/bulma
     '@nuxtjs/bulma',
     // Doc: https://axios.nuxtjs.org/usage
-    ['@nuxtjs/axios', {
-      baseURL: 'http://localhost:8000/api/'
-    }],
+    '@nuxtjs/axios',
     "@nuxtjs/toast",
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
@@ -60,7 +58,6 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
    axios: {
-    baseURL: "http://localhost:8000/api",
     proxy: true,
     redirectError: {
       401: '/auth/login',

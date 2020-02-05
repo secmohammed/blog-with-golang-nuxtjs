@@ -2,7 +2,6 @@ package users
 
 import (
     "encoding/json"
-    "fmt"
     "net/http"
 
     "go-auth-with-crud-api/server/app/http/requests"
@@ -59,6 +58,39 @@ func GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(user)
 }
 
+//ParseChangePasswordForm is used to parse the user's password.
+func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
+    var form requests.ChangePasswordFormRequest
+    err := json.NewDecoder(r.Body).Decode(&form) //decode the request body into struct and failed if any error occur
+    if err != nil {
+        utils.Respond(w, utils.Message(false, "Invalid request"))
+        return
+    }
+    messages, status := requests.IsSubmittedChangePasswordFormValid(&form)
+    if !status {
+        w.WriteHeader(422)
+        utils.Respond(w, messages)
+        return
+    }
+    userID := r.Context().Value(utils.ContextKeyAuthToken).(uint)
+    user, err := models.ByID(userID)
+    if err != nil {
+        w.WriteHeader(401)
+        utils.Respond(w, utils.Message(false, "Could not find this user throughout its token."))
+        return
+    }
+    user, err = user.ChangePassword(form.CurrentPassword, form.Password)
+    if err != nil {
+        w.WriteHeader(401)
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
+    user.Password = ""
+    response := utils.Message(true, "Password has been changed")
+    response["user"] = user
+    utils.Respond(w, response)
+}
+
 //ParseRegisterForm to parse the registration form when submitted.
 func ParseRegisterForm(w http.ResponseWriter, r *http.Request) {
 
@@ -69,7 +101,6 @@ func ParseRegisterForm(w http.ResponseWriter, r *http.Request) {
         return
     }
     messages, status := requests.IsSubmittedRegisterFormValid(user)
-    fmt.Println(messages, status)
     if !status {
         w.WriteHeader(422)
         utils.Respond(w, messages)

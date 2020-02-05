@@ -70,7 +70,7 @@
             return
           }
           this.$router.replace({
-            name: 'index'
+            name: 'auth-login'
           })
 
         })

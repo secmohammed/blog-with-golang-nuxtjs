@@ -23,7 +23,17 @@ func RegisterAPIRoutes() {
     userAuthArea := router.PathPrefix("/api/auth").Subrouter()
     userAuthArea.Use(middlewares.Authenticate)
     userAuthArea.HandleFunc("/user", users.GetAuthenticatedUser).Methods("GET")
-    handler := cors.Default().Handler(router)
+    userAuthArea.HandleFunc("/change-password", users.ParseChangePasswordForm).Methods("POST")
+    c := cors.New(cors.Options{
+        AllowedOrigins:   []string{"http://localhost:3000"},
+        AllowedHeaders:   []string{"Authorization", "Content-Type"},
+        AllowCredentials: true,
+        // Enable Debugging for testing, consider disabling in production
+        Debug: true,
+    })
+
+    // Insert the middleware
+    handler := c.Handler(router)
 
     http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("APP_PORT")), handler)
 

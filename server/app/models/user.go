@@ -63,7 +63,6 @@ func ByID(id uint) (*User, error) {
     if err != nil {
         return nil, err
     }
-    user.Password = ""
     return &user, nil
 }
 
@@ -80,6 +79,26 @@ func Delete(id uint) error {
         },
     }
     return db.Delete(&user).Error
+}
+
+//ChangePassword function is used to change the current logged in user's password.
+func (user *User) ChangePassword(currentPassword, password string) (*User, error) {
+    err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword))
+    if err != nil {
+        switch err {
+        case bcrypt.ErrMismatchedHashAndPassword:
+            return nil, ErrorInvalidPassword
+        default:
+            return nil, err
+        }
+    }
+    hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return nil, err
+    }
+    user.Password = string(hashedBytes)
+    err = db.Save(&user).Error
+    return user, err
 }
 
 // Authenticate function is used to authorize user throughout his credentials.
