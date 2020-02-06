@@ -27,30 +27,19 @@ func ParseLoginForm(w http.ResponseWriter, r *http.Request) {
     }
 
     user, err = user.Authenticate()
+    if err != nil {
+        w.WriteHeader(http.StatusForbidden)
+
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
     isActive, err := user.IsActivated()
     if !isActive {
         w.WriteHeader(http.StatusForbidden)
         utils.Respond(w, utils.Message(false, "You have not activated your account yet."))
         return
     }
-    if err != nil {
-        switch err {
-        case models.ErrorNotFound:
-            w.WriteHeader(http.StatusForbidden)
-            utils.Respond(w, utils.Message(false, "Invalid Email address"))
-            break
-        case models.ErrorInvalidPassword:
-            w.WriteHeader(http.StatusForbidden)
 
-            utils.Respond(w, utils.Message(false, "Invalid password"))
-            break
-        default:
-            w.WriteHeader(500)
-            utils.Respond(w, utils.Message(false, err.Error()))
-            break
-        }
-        return
-    }
     response := utils.Message(true, "Logged in successfully")
     response["user"] = user
     utils.Respond(w, response)

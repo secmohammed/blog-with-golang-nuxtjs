@@ -16,13 +16,13 @@ var (
     db *gorm.DB = utils.GetDatabaseConnection()
 
     // ErrorNotFound is returned when a resource cannot be found.
-    ErrorNotFound = errors.New("model: resource not found")
+    ErrorNotFound = errors.New("resource not found")
 
     //ErrorInvaildID will be thrown in case of the id is invalid or equal to zero.
-    ErrorInvaildID = errors.New("models: ID provided was invalid")
+    ErrorInvaildID = errors.New("ID provided was invalid")
 
     //ErrorInvalidPassword will be thrown in case of password mismatch
-    ErrorInvalidPassword = errors.New("models: incorrect password provided")
+    ErrorInvalidPassword = errors.New("incorrect password provided")
 )
 
 // Token type.
