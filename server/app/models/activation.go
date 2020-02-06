@@ -49,10 +49,12 @@ func (user *User) IsActivated() (bool, error) {
 
 //Activate function is used to activate the current authenticated user.
 func (activation *Activation) Activate() (*Activation, error) {
-    db.Model(&activation).Updates(Activation{
-        Token:  "",
-        Active: true,
-    })
+    activation.Token = ""
+    activation.Active = true
+    err := db.Save(&activation).Error
+    if err != nil {
+        return nil, err
+    }
     return activation, nil
 }
 
