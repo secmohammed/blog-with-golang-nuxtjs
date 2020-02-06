@@ -24,12 +24,31 @@ func ByUserID(id uint) (*Activation, error) {
     return &activation, nil
 }
 
-//Activate function is used to activate the current authenticated user.
-func (user *User) Activate() (*Activation, error) {
-    activation, err := ByUserID(user.ID)
+//ByActivationToken function is used to fetch the record by the token passed.
+func ByActivationToken(token string) (*Activation, error) {
+    var activation Activation
+    err := db.Where("token = ?", token).First(&activation).Error
     if err != nil {
         return nil, err
     }
+    return &activation, nil
+}
+
+//IsActivated function is used to check on the user if activated or not.
+func (user *User) IsActivated() (bool, error) {
+    var activation Activation
+    err := db.Where("user_id = ? ", user.ID).First(&activation).Error
+    if err != nil {
+        return false, err
+    }
+    if activation.Token != "" || !activation.Active {
+        return false, nil
+    }
+    return true, nil
+}
+
+//Activate function is used to activate the current authenticated user.
+func (activation *Activation) Activate() (*Activation, error) {
     db.Model(&activation).Updates(Activation{
         Token:  "",
         Active: true,

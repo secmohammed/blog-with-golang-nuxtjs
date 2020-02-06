@@ -20,6 +20,7 @@ func RegisterAPIRoutes() {
     userGuestArea.Use(middlewares.Guest)
     userGuestArea.HandleFunc("/register", users.ParseRegisterForm).Methods("POST")
     userGuestArea.HandleFunc("/login", users.ParseLoginForm).Methods("POST")
+    userGuestArea.HandleFunc("/activate/{token}", users.ActivateRegisteredAccount).Methods("GET")
     userAuthArea := router.PathPrefix("/api/auth").Subrouter()
     userAuthArea.Use(middlewares.Authenticate)
     userAuthArea.HandleFunc("/user", users.GetAuthenticatedUser).Methods("GET")

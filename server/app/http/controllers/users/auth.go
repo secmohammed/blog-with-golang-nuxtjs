@@ -8,6 +8,8 @@ import (
     "go-auth-with-crud-api/server/app/mails"
     "go-auth-with-crud-api/server/app/models"
     "go-auth-with-crud-api/server/utils"
+
+    "github.com/gorilla/mux"
 )
 
 //ParseLoginForm to parse the login form when submitted.
@@ -25,19 +27,25 @@ func ParseLoginForm(w http.ResponseWriter, r *http.Request) {
     }
 
     user, err = user.Authenticate()
+    isActive, err := user.IsActivated()
+    if !isActive {
+        w.WriteHeader(401)
+        utils.Respond(w, utils.Message(false, "You have not activated your account yet."))
+        return
+    }
     if err != nil {
         switch err {
         case models.ErrorNotFound:
-            w.WriteHeader(422)
+            w.WriteHeader(401)
             utils.Respond(w, utils.Message(false, "Invalid Email address"))
             break
         case models.ErrorInvalidPassword:
-            w.WriteHeader(422)
+            w.WriteHeader(401)
 
             utils.Respond(w, utils.Message(false, "Invalid password"))
             break
         default:
-            w.WriteHeader(422)
+            w.WriteHeader(500)
             utils.Respond(w, utils.Message(false, err.Error()))
             break
         }
@@ -90,6 +98,23 @@ func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
     response := utils.Message(true, "Password has been changed")
     response["user"] = user
     utils.Respond(w, response)
+}
+
+//ActivateRegisteredAccount function is used to activate the account through out the passed token.
+func ActivateRegisteredAccount(w http.ResponseWriter, r *http.Request) {
+    token := mux.Vars(r)["token"]
+    activation, err := models.ByActivationToken(token)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
+    activation, err = activation.Activate()
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+
+        return
+    }
+    utils.Respond(w, utils.Message(true, "User has been activated successfully."))
 }
 
 //ParseRegisterForm to parse the registration form when submitted.
