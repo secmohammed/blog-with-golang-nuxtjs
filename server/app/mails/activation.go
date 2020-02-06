@@ -1,7 +1,6 @@
 package mails
 
 import (
-    "fmt"
     "go-auth-with-crud-api/server/app/models"
     "log"
     "net/smtp"
@@ -14,8 +13,6 @@ func SendActivationMail(user *models.User, activation *models.Activation) {
     password := os.Getenv("MAIL_PASSWORD")
     host := os.Getenv("MAIL_HOST")
     port := os.Getenv("MAIL_PORT")
-    fmt.Println(port, from)
-    // Choose auth method and set it up
     msg := "From: " + from + "\n" +
         "To: " + user.Email + "\n" +
         "Subject: Welcome on board, Activate your account\n\n" +

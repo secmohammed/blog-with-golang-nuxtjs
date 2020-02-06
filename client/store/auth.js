@@ -23,6 +23,13 @@ export const mutations = {
     }
 }
 export const actions = {
+  resetPassword(_, payload) {
+    return new Promise((resolve, reject) => {
+      this.$axios.$post(`auth/reset-password/${payload.token}`, payload.form)
+        .then(res => resolve(res.user))
+        .catch(err => reject(err))
+    })
+  }, 
   forgetPassword(_, payload) {
     return new Promise((resolve, reject) => {
       this.$axios.$post('auth/forget-password', payload)

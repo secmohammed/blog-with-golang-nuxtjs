@@ -62,6 +62,12 @@ func ParseResetPassword(w http.ResponseWriter, r *http.Request) {
     var form requests.ResetPasswordFormRequest
     err := json.NewDecoder(r.Body).Decode(&form)
     token := mux.Vars(r)["token"]
+    reminder, err := models.ByReminderToken(token)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
+
     if err != nil {
         utils.Respond(w, utils.Message(false, "Invalid request"))
         return
@@ -70,12 +76,6 @@ func ParseResetPassword(w http.ResponseWriter, r *http.Request) {
     if !status {
         w.WriteHeader(http.StatusUnprocessableEntity)
         utils.Respond(w, messages)
-        return
-    }
-    // preload the user which has this reminder.
-    reminder, err := models.ByReminderToken(token)
-    if err != nil {
-        utils.Respond(w, utils.Message(false, err.Error()))
         return
     }
     user, err := models.ByID(reminder.UserID)

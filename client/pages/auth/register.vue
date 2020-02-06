@@ -64,7 +64,7 @@
     methods : {
       login() {
         this.$store.dispatch('auth/register', this.form).then((user) => {
-          this.$toast.success(`Alright, you can now login ${user.name}`)
+          this.$toast.success(`Alright, you have to check your mail in order to activate your account, ${user.name}.`)
           if (this.$route.query.redirect) {
             this.$router.replace(this.$route.query.redirect)
             return
