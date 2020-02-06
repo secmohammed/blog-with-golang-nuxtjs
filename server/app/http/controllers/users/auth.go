@@ -29,18 +29,18 @@ func ParseLoginForm(w http.ResponseWriter, r *http.Request) {
     user, err = user.Authenticate()
     isActive, err := user.IsActivated()
     if !isActive {
-        w.WriteHeader(401)
+        w.WriteHeader(http.StatusForbidden)
         utils.Respond(w, utils.Message(false, "You have not activated your account yet."))
         return
     }
     if err != nil {
         switch err {
         case models.ErrorNotFound:
-            w.WriteHeader(401)
+            w.WriteHeader(http.StatusForbidden)
             utils.Respond(w, utils.Message(false, "Invalid Email address"))
             break
         case models.ErrorInvalidPassword:
-            w.WriteHeader(401)
+            w.WriteHeader(http.StatusForbidden)
 
             utils.Respond(w, utils.Message(false, "Invalid password"))
             break
@@ -77,20 +77,20 @@ func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
     }
     messages, status := requests.IsSubmittedChangePasswordFormValid(&form)
     if !status {
-        w.WriteHeader(422)
+        w.WriteHeader(http.StatusUnprocessableEntity)
         utils.Respond(w, messages)
         return
     }
     userID := r.Context().Value(utils.ContextKeyAuthToken).(uint)
     user, err := models.ByID(userID)
     if err != nil {
-        w.WriteHeader(401)
+        w.WriteHeader(http.StatusForbidden)
         utils.Respond(w, utils.Message(false, "Could not find this user throughout its token."))
         return
     }
     user, err = user.ChangePassword(form.CurrentPassword, form.Password)
     if err != nil {
-        w.WriteHeader(401)
+        w.WriteHeader(http.StatusForbidden)
         utils.Respond(w, utils.Message(false, err.Error()))
         return
     }
@@ -103,6 +103,11 @@ func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
 //ActivateRegisteredAccount function is used to activate the account through out the passed token.
 func ActivateRegisteredAccount(w http.ResponseWriter, r *http.Request) {
     token := mux.Vars(r)["token"]
+    if len(token) != 32 {
+        utils.Respond(w, utils.Message(false, "Invalid Token format."))
+        return
+    }
+
     activation, err := models.ByActivationToken(token)
     if err != nil {
         utils.Respond(w, utils.Message(false, err.Error()))
@@ -128,7 +133,7 @@ func ParseRegisterForm(w http.ResponseWriter, r *http.Request) {
     }
     messages, status := requests.IsSubmittedRegisterFormValid(user)
     if !status {
-        w.WriteHeader(422)
+        w.WriteHeader(http.StatusUnprocessableEntity)
         utils.Respond(w, messages)
         return
     }
