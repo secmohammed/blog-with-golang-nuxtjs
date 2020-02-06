@@ -83,6 +83,10 @@ func Store(w http.ResponseWriter, r *http.Request) {
 func Update(w http.ResponseWriter, r *http.Request) {
     title := mux.Vars(r)["post"]
     post, err := models.FindByTitle(title)
+    if post.UserID != r.Context().Value(utils.ContextKeyAuthToken).(uint) {
+        utils.Respond(w, utils.Message(false, "You don't own this post to update."))
+        return
+    }
     if err != nil {
         utils.Respond(w, utils.Message(false, err.Error()))
         return
