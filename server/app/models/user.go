@@ -34,11 +34,10 @@ type Token struct {
 // User type
 type User struct {
     gorm.Model
-    Name       string `json:"name"`
-    Email      string `json:"email"`
-    Password   string `json:"password"`
-    Token      string `json:"token" ;sql:"-"`
-    Activation Activation
+    Name     string `json:"name"`
+    Email    string `json:"email"`
+    Password string `json:"password"`
+    Token    string `json:"token" ;sql:"-"`
 }
 
 //Create function is used to create a users record
@@ -48,13 +47,8 @@ func (user *User) Create() (*User, error) {
         return nil, err
     }
     user.Password = string(hashedBytes)
-    err = db.Create(&user).Error
+    err = Create(&user)
     return user, err
-}
-
-// UpdateUser will update the provided user with all of the data passed through the user object.
-func UpdateUser(user *User) error {
-    return db.Save(user).Error
 }
 
 // ByID will look up the users using the given id.
