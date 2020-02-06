@@ -78,3 +78,34 @@ func Store(w http.ResponseWriter, r *http.Request) {
     utils.Respond(w, response)
 
 }
+
+// Update function is used to create a post.
+func Update(w http.ResponseWriter, r *http.Request) {
+    title := mux.Vars(r)["post"]
+    post, err := models.FindByTitle(title)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
+    err = json.NewDecoder(r.Body).Decode(&post) //decode the request body into struct and failed if any error occur
+    if err != nil {
+        utils.Respond(w, utils.Message(false, "Invalid request"))
+        return
+    }
+
+    messages, status := requests.IsSubmittedStorePostFormValid(post)
+    if !status {
+        w.WriteHeader(http.StatusUnprocessableEntity)
+        utils.Respond(w, messages)
+        return
+    }
+    err = models.Update(post)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, "Couldn't update post"))
+        return
+    }
+    response := utils.Message(true, "Post has been updated")
+    response["post"] = post
+    utils.Respond(w, response)
+
+}

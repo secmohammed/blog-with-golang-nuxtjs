@@ -23,6 +23,7 @@ func RegisterAPIRoutes() {
     postAuthArea.Use(middlewares.Authenticate)
     postAuthArea.HandleFunc("", posts.Store).Methods("POST")
     postAuthArea.HandleFunc("/{post}", posts.Destroy).Methods("DELETE")
+    postAuthArea.HandleFunc("/{post}", posts.Update).Methods("PUT")
     // auth routes.
     userGuestArea := router.PathPrefix("/api/auth").Subrouter()
     userGuestArea.Use(middlewares.Guest)
