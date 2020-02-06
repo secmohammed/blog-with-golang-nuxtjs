@@ -20,7 +20,7 @@ export default function({
                 app.$toast.error('God ! , what did you do.. ')
             }
             if (error.response.status == 404) {
-                app.$toast.error('We could not find what you are searching for.')
+                app.$toast.error(error.response.data.message)
             }
             if (error.response.status == 401) {
                 app.$toast.error(error.response.data.message)

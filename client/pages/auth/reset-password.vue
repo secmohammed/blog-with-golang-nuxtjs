@@ -49,7 +49,7 @@
       }
     },
     created() {
-      this.token = this.$router.params.token
+      this.token = this.$route.query.token
     },
     computed: {
       isButtonDisabled() {

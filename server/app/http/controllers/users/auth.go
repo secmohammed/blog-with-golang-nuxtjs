@@ -64,7 +64,8 @@ func ParseResetPassword(w http.ResponseWriter, r *http.Request) {
     token := mux.Vars(r)["token"]
     reminder, err := models.ByReminderToken(token)
     if err != nil {
-        utils.Respond(w, utils.Message(false, err.Error()))
+        w.WriteHeader(http.StatusNotFound)
+        utils.Respond(w, utils.Message(false, "Invalid Token."))
         return
     }
 
