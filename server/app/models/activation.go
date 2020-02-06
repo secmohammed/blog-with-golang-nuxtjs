@@ -11,7 +11,7 @@ type Activation struct {
     gorm.Model
     UserID uint   `json:"user_id"`
     Token  string `json:"token"`
-    Active bool   `json:"active"; gorm:"default:false"`
+    Active bool   `json:"active"`
 }
 
 // ByUserID function is used to fetch the record by the user id.
