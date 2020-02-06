@@ -58,8 +58,8 @@ func (activation *Activation) Activate() (*Activation, error) {
     return activation, nil
 }
 
-//GenerateToken function is used to create a token for the associated user.
-func (user *User) GenerateToken() (*Activation, error) {
+//GenerateActivationToken function is used to create a token for the associated user.
+func (user *User) GenerateActivationToken() (*Activation, error) {
     activation := &Activation{
         UserID: user.ID,
         Token:  utils.GenerateRandomString(32),

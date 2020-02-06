@@ -56,6 +56,80 @@ func GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(user)
 }
 
+//ParseResetPassword function is used to change password for the associated user that we will
+// retrieve through token and then update the password.
+func ParseResetPassword(w http.ResponseWriter, r *http.Request) {
+    var form requests.ResetPasswordFormRequest
+    err := json.NewDecoder(r.Body).Decode(&form)
+    token := mux.Vars(r)["token"]
+    if err != nil {
+        utils.Respond(w, utils.Message(false, "Invalid request"))
+        return
+    }
+    messages, status := requests.IsSubmittedResetPasswordFormValid(&form)
+    if !status {
+        w.WriteHeader(http.StatusUnprocessableEntity)
+        utils.Respond(w, messages)
+        return
+    }
+    // preload the user which has this reminder.
+    reminder, err := models.ByReminderToken(token)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
+    user, err := models.ByID(reminder.UserID)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
+    user, err = user.ResetPassword(form.Password)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
+    err = reminder.RevokeReminderToken()
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+
+    }
+    user.Password = ""
+    response := utils.Message(true, "Password has been changed successfully.")
+    response["user"] = user
+    utils.Respond(w, response)
+
+}
+
+//ParseForgetPasswordForm is used to parse the user's email and send an email.
+func ParseForgetPasswordForm(w http.ResponseWriter, r *http.Request) {
+    var form requests.ForgetPasswordFormRequest
+    err := json.NewDecoder(r.Body).Decode(&form)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, "Invalid request"))
+        return
+    }
+    messages, status := requests.IsSubmittedForgetPasswordFormValid(&form)
+    if !status {
+        w.WriteHeader(http.StatusUnprocessableEntity)
+        utils.Respond(w, messages)
+        return
+    }
+    // I Don't need to check against mail existence as I've done that at validation.
+    user, _ := models.ByEmail(form.Email)
+    reminder, err := user.GenerateReminderToken()
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+        return
+    }
+    mails.SendForgetPasswordEmail(user, reminder)
+    user.Password = ""
+    response := utils.Message(true, "Mail has been sent, check your mail.")
+    response["user"] = user
+    utils.Respond(w, response)
+
+}
+
 //ParseChangePasswordForm is used to parse the user's password.
 func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
     var form requests.ChangePasswordFormRequest
@@ -127,7 +201,7 @@ func ParseRegisterForm(w http.ResponseWriter, r *http.Request) {
         return
     }
     user, err = user.Create()
-    activation, err := user.GenerateToken()
+    activation, err := user.GenerateActivationToken()
     if err != nil {
         utils.Respond(w, utils.Message(false, "Couldn't create an activation token, try again."))
         return

@@ -52,8 +52,8 @@ func (user *User) Create() (*User, error) {
     return user, err
 }
 
-// Update will update the provided user with all of the data passed through the user object.
-func Update(user *User) error {
+// UpdateUser will update the provided user with all of the data passed through the user object.
+func UpdateUser(user *User) error {
     return db.Save(user).Error
 }
 
@@ -80,6 +80,18 @@ func Delete(id uint) error {
         },
     }
     return db.Delete(&user).Error
+}
+
+// ResetPassword function is used to reset the user's password.
+func (user *User) ResetPassword(password string) (*User, error) {
+    hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return nil, err
+    }
+    user.Password = string(hashedBytes)
+    err = db.Save(&user).Error
+    return user, err
+
 }
 
 //ChangePassword function is used to change the current logged in user's password.
