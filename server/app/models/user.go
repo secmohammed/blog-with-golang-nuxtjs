@@ -1,28 +1,11 @@
 package models
 
 import (
-    "errors"
     "os"
-
-    "go-auth-with-crud-api/server/utils"
 
     "github.com/dgrijalva/jwt-go"
     "github.com/jinzhu/gorm"
     "golang.org/x/crypto/bcrypt"
-)
-
-var (
-    // db variable to get the database connection.
-    db *gorm.DB = utils.GetDatabaseConnection()
-
-    // ErrorNotFound is returned when a resource cannot be found.
-    ErrorNotFound = errors.New("resource not found")
-
-    //ErrorInvaildID will be thrown in case of the id is invalid or equal to zero.
-    ErrorInvaildID = errors.New("ID provided was invalid")
-
-    //ErrorInvalidPassword will be thrown in case of password mismatch
-    ErrorInvalidPassword = errors.New("incorrect password provided")
 )
 
 // Token type.
@@ -38,6 +21,7 @@ type User struct {
     Email    string `json:"email"`
     Password string `json:"password"`
     Token    string `json:"token" ;sql:"-"`
+    Posts    Posts
 }
 
 //Create function is used to create a users record
@@ -59,21 +43,6 @@ func ByID(id uint) (*User, error) {
         return nil, err
     }
     return &user, nil
-}
-
-//Delete function will delete the user with the provided id.
-func Delete(id uint) error {
-    // gorm will delete all of the records if the id equals to zero.
-    if id == 0 {
-        return ErrorInvaildID
-    }
-    // Gorm delete needs the primary key with the reference of the object to understand which table we are deleting from.
-    user := User{
-        Model: gorm.Model{
-            ID: id,
-        },
-    }
-    return db.Delete(&user).Error
 }
 
 // ResetPassword function is used to reset the user's password.

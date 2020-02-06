@@ -5,6 +5,7 @@ import (
     "net/http"
     "os"
 
+    "go-auth-with-crud-api/server/app/http/controllers/posts"
     "go-auth-with-crud-api/server/app/http/controllers/users"
     "go-auth-with-crud-api/server/app/http/middlewares"
 
@@ -15,6 +16,13 @@ import (
 // RegisterAPIRoutes is used to register the routes we need for the web application.
 func RegisterAPIRoutes() {
     router := mux.NewRouter()
+    postPublicArea := router.PathPrefix("/api/posts").Subrouter()
+    postPublicArea.HandleFunc("", posts.Index).Methods("GET")
+    postPublicArea.HandleFunc("/{post}", posts.Show).Methods("GET")
+    postAuthArea := router.PathPrefix("/api/posts").Subrouter()
+    postAuthArea.Use(middlewares.Authenticate)
+    postAuthArea.HandleFunc("", posts.Store).Methods("POST")
+    postAuthArea.HandleFunc("/{post}", posts.Destroy).Methods("DELETE")
     // auth routes.
     userGuestArea := router.PathPrefix("/api/auth").Subrouter()
     userGuestArea.Use(middlewares.Guest)
@@ -34,7 +42,6 @@ func RegisterAPIRoutes() {
         // Enable Debugging for testing, consider disabling in production
         Debug: true,
     })
-
     // Insert the middleware
     handler := c.Handler(router)
 
