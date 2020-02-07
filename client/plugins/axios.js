@@ -4,14 +4,15 @@ export default function({
     store,
     app
 }) {
-    if (process.client) {
-        $axios.onRequest(config => {
-            config.url = `${process.env.BASE_URL}/${config.url}`
-            if (store.getters['auth/authenticated']) {
-                config.headers["Authorization"] = `Bearer ${store.getters['auth/token']}`                
-            }
+    $axios.onRequest(config => {
+        config.url = `${process.env.BASE_URL}/${config.url}`
+        if (store.getters['auth/authenticated']) {
+            config.headers["Authorization"] = `Bearer ${store.getters['auth/token']}`                
+        }
 
-        })
+    })
+
+    if (process.client) {
         $axios.onResponseError(error => {
             if (error.response.status == 422) {
                 app.$toast.error(error.response.data.message || 'Invalid Data Supplied')
