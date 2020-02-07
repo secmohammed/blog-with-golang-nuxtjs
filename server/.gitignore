@@ -5,7 +5,7 @@
 # Folders
 _obj
 _test
-
+public/images/*
 # Architecture specific extensions/prefixes
 **/tmp/*
 *.cgo1.go
