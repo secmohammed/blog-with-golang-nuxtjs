@@ -35,6 +35,7 @@ func RegisterAPIRoutes() {
     userAuthArea := router.PathPrefix("/api/auth").Subrouter()
     userAuthArea.Use(middlewares.Authenticate)
     userAuthArea.HandleFunc("/user", users.GetAuthenticatedUser).Methods("GET")
+    userAuthArea.HandleFunc("/profile", users.Update).Methods("POST")
     userAuthArea.HandleFunc("/change-password", users.ParseChangePasswordForm).Methods("POST")
     c := cors.New(cors.Options{
         AllowedOrigins:   []string{"http://localhost:3000"},

@@ -2,7 +2,6 @@ package models
 
 import (
     "errors"
-    "fmt"
     "go-auth-with-crud-api/server/utils"
 
     "github.com/jinzhu/gorm"
@@ -34,6 +33,5 @@ func Create(dst interface{}) error {
 
 // Delete will delete the provided struct.
 func Delete(dst interface{}, key, value string) error {
-    fmt.Println(dst)
     return db.Where(key+" = ?", value).Delete(dst).Error
 }

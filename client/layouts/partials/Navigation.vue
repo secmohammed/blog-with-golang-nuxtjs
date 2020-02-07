@@ -25,6 +25,9 @@
           <nuxt-link :to="{ name :'auth-change-password'}" class="navbar-item">
             Change Your Password
           </nuxt-link>
+          <nuxt-link :to="{ name :'auth-profile'}" class="navbar-item">
+            Update Your profile
+          </nuxt-link>
           
         </template>
       </div>

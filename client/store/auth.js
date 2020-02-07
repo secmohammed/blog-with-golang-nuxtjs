@@ -23,6 +23,20 @@ export const mutations = {
     }
 }
 export const actions = {
+  updateProfile({ commit }, payload) {
+    return new Promise((resolve, reject) => {
+      this.$axios.$post(`auth/profile`, payload, {
+        header: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+        .then(res => {
+          commit("SET_USER", res.user)
+          resolve(res)
+        })
+        .catch(err => reject(err))
+    })
+  },
   resetPassword(_, payload) {
     return new Promise((resolve, reject) => {
       this.$axios.$post(`auth/reset-password/${payload.token}`, payload.form)

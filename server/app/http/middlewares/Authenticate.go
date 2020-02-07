@@ -2,7 +2,6 @@ package middlewares
 
 import (
     "context"
-    "fmt"
     "go-auth-with-crud-api/server/app/models"
     u "go-auth-with-crud-api/server/utils"
     "net/http"
@@ -17,8 +16,7 @@ var Authenticate = func(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         response := make(map[string]interface{})
         tokenHeader := r.Header.Get("Authorization") //Grab the token from the header
-        fmt.Println("here")
-        if tokenHeader == "" { //Token is missing, returns with error code 403 Unauthorized
+        if tokenHeader == "" {                       //Token is missing, returns with error code 403 Unauthorized
             response = u.Message(false, "Missing auth token")
             w.WriteHeader(http.StatusForbidden)
             w.Header().Add("Content-Type", "application/json")
