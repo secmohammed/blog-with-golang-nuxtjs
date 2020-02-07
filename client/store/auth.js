@@ -23,7 +23,7 @@ export const mutations = {
     }
 }
 export const actions = {
-  updateProfile({ commit }, payload) {
+  updateProfile({ commit, state}, payload) {
     return new Promise((resolve, reject) => {
       this.$axios.$post(`auth/profile`, payload, {
         header: {
@@ -31,7 +31,10 @@ export const actions = {
         }
       })
         .then(res => {
-          commit("SET_USER", res.user)
+          commit("SET_USER", {
+            ...res.user,
+            token: state.user.token
+          })
           resolve(res)
         })
         .catch(err => reject(err))
