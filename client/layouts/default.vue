@@ -5,10 +5,10 @@
   </div>
 </template>
 <script>
-  import Navigation from '@/layouts/partials/Navigation'
-  export default {
-    components: {
-      Navigation
-    }
+import Navigation from "@/layouts/partials/Navigation";
+export default {
+  components: {
+    Navigation
   }
+};
 </script>

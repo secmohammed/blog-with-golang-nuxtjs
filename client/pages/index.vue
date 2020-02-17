@@ -11,7 +11,7 @@
                         <div class="media">
                             <div class="media-center">
                                 <img
-                                    src="http://www.radfaces.com/images/avatars/angela-chase.jpg"
+                                    :src="authorAvatar"
                                     class="author-image"
                                     alt="Placeholder image"
                                 />
@@ -42,6 +42,11 @@ export default {
         return {
             posts: []
         };
+    },
+    computed: {
+        authorAvatar(post) {
+            return process.env.BASE_URL + post.user.avatar;
+        }
     },
     async asyncData({ params, app, store }) {
         let response = await app.$axios.$get("posts");

@@ -1,7 +1,7 @@
 import { some, has } from "lodash";
 export default function({ $axios, store, app }) {
     $axios.onRequest(config => {
-        config.url = `${process.env.BASE_URL}/${config.url}`;
+        config.url = `${process.env.API_URL}/${config.url}`;
         if (store.getters["auth/authenticated"]) {
             config.headers[
                 "Authorization"
@@ -19,10 +19,7 @@ export default function({ $axios, store, app }) {
             if (error.response.status == 500) {
                 app.$toast.error("God ! , what did you do.. ");
             }
-            if (error.response.status == 404) {
-                app.$toast.error(error.response.data.message);
-            }
-            if (error.response.status == 401) {
+            if (error.response.status >= 400) {
                 app.$toast.error(error.response.data.message);
             }
             return Promise.reject(error);

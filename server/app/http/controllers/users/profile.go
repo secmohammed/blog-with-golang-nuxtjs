@@ -69,6 +69,8 @@ func Show(w http.ResponseWriter, r *http.Request) {
         return
     }
     user, err := models.ByID(uint(userID))
+    user.Password = ""
+    user.Token = ""
     if err != nil {
         utils.Respond(w, utils.Message(false, err.Error()))
         return

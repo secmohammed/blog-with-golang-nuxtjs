@@ -16,6 +16,8 @@ import (
 // RegisterAPIRoutes is used to register the routes we need for the web application.
 func RegisterAPIRoutes() {
     router := mux.NewRouter()
+    router.PathPrefix("/images/").Handler(http.StripPrefix("/images/",
+        http.FileServer(http.Dir("public/images/"))))
     postPublicArea := router.PathPrefix("/api/posts").Subrouter()
     postPublicArea.HandleFunc("", posts.Index).Methods("GET")
     postPublicArea.HandleFunc("/{post}", posts.Show).Methods("GET")
@@ -37,6 +39,8 @@ func RegisterAPIRoutes() {
     userAuthArea.HandleFunc("/user", users.GetAuthenticatedUser).Methods("GET")
     userAuthArea.HandleFunc("/profile", users.Update).Methods("POST")
     userAuthArea.HandleFunc("/change-password", users.ParseChangePasswordForm).Methods("POST")
+    userPublicArea := router.PathPrefix("/api/users").Subrouter()
+    userPublicArea.HandleFunc("/profile/{user}", users.Show).Methods("GET")
     c := cors.New(cors.Options{
         AllowedOrigins:   []string{"http://localhost:3000"},
         AllowedHeaders:   []string{"Authorization", "Content-Type"},

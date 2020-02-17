@@ -10,7 +10,7 @@ type Post struct {
     Title  string `json:"title"`
     Body   string `json:"body"`
     UserID uint
-    // User   User `gorm:"foreignKey:UserID; association_foreignKey:UserID"`
+    User   User `gorm:"foreignKey:UserID; association_foreignKey:UserID"`
 }
 
 // Posts are collection of post type.
@@ -19,7 +19,7 @@ type Posts []Post
 // GetAllPosts is used to fetch all of the posts.
 func GetAllPosts() (Posts, error) {
     var posts Posts
-    err := db.Find(&posts).Error
+    err := db.Preloads("User").Find(&posts).Error
     return posts, err
 }
 
