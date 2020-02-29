@@ -4,7 +4,6 @@ import (
     "os"
 
     "github.com/dgrijalva/jwt-go"
-    "github.com/jinzhu/gorm"
     "golang.org/x/crypto/bcrypt"
 )
 
@@ -16,7 +15,7 @@ type Token struct {
 
 // User type
 type User struct {
-    gorm.Model
+    BaseGorm
     Name     string `json:"name"`
     Email    string `json:"email"`
     Password string `json:"password"`

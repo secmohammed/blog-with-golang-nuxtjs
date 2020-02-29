@@ -1,12 +1,8 @@
 package models
 
-import (
-    "github.com/jinzhu/gorm"
-)
-
 // Post struct type.
 type Post struct {
-    gorm.Model
+    BaseGorm
     Title  string `json:"title"`
     Body   string `json:"body"`
     UserID uint

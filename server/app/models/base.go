@@ -3,9 +3,18 @@ package models
 import (
     "errors"
     "go-auth-with-crud-api/server/utils"
+    "time"
 
     "github.com/jinzhu/gorm"
 )
+
+//BaseGorm is a type of struct to express the attributes in json format.
+type BaseGorm struct {
+    ID        uint       `json:"id" gorm:"primary_key"`
+    CreatedAt time.Time  `json:"created_at"`
+    UpdatedAt time.Time  `json:"updated_at"`
+    DeletedAt *time.Time `json:"deleted_at" sql:"index"`
+}
 
 var (
     // db variable to get the database connection.

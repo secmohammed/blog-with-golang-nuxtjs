@@ -2,13 +2,11 @@ package models
 
 import (
     "go-auth-with-crud-api/server/utils"
-
-    "github.com/jinzhu/gorm"
 )
 
 // Reminder type
 type Reminder struct {
-    gorm.Model
+    BaseGorm
     UserID uint   `json:"user_id"`
     Token  string `json:"token"`
 }
