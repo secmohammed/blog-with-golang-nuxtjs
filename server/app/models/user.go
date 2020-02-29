@@ -18,13 +18,15 @@ type User struct {
     BaseGorm
     Name     string `json:"name"`
     Email    string `json:"email"`
-    Password string `json:"password"`
-    Token    string `json:"token" ;sql:"-"`
+    Password string `json:"-"`
+    Token    string `json:"-" ;sql:"-"`
     Avatar   string `json:"avatar"`
 }
 
 //Create function is used to create a users record
 func (user *User) Create() (*User, error) {
+    defer db.Close()
+
     hashedBytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
     if err != nil {
         return nil, err
@@ -36,6 +38,8 @@ func (user *User) Create() (*User, error) {
 
 // ByID will look up the users using the given id.
 func ByID(id uint) (*User, error) {
+    defer db.Close()
+
     var user User
     err := db.Where("id = ?", id).First(&user).Error
     if err != nil {
@@ -46,6 +50,8 @@ func ByID(id uint) (*User, error) {
 
 // ResetPassword function is used to reset the user's password.
 func (user *User) ResetPassword(password string) (*User, error) {
+    defer db.Close()
+
     hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
     if err != nil {
         return nil, err
@@ -58,6 +64,8 @@ func (user *User) ResetPassword(password string) (*User, error) {
 
 //ChangePassword function is used to change the current logged in user's password.
 func (user *User) ChangePassword(currentPassword, password string) (*User, error) {
+    defer db.Close()
+
     err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword))
     if err != nil {
         switch err {
@@ -78,6 +86,8 @@ func (user *User) ChangePassword(currentPassword, password string) (*User, error
 
 // Authenticate function is used to authorize user throughout his credentials.
 func (user *User) Authenticate() (*User, error) {
+    defer db.Close()
+
     foundUser, err := ByEmail(user.Email)
     if err != nil {
         return nil, err
@@ -96,13 +106,14 @@ func (user *User) Authenticate() (*User, error) {
     tk := &Token{UserID: foundUser.ID}
     token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
     tokenString, _ := token.SignedString([]byte(os.Getenv("APP_KEY")))
-    foundUser.Password = ""
     foundUser.Token = tokenString
     return foundUser, nil
 }
 
 // ByEmail function will lok up the users using the given email.
 func ByEmail(email string) (*User, error) {
+    defer db.Close()
+
     var user User
     err := db.Where("email = ?", email).First(&user).Error
     if err != nil {

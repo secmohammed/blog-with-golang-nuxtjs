@@ -4,7 +4,7 @@
             <div
                 class="column is-8 is-offset-2"
                 v-for="post in posts"
-                :key="post.ID"
+                :key="post.id"
             >
                 <div class="card article">
                     <div class="card-content">
@@ -23,7 +23,7 @@
                                 </p>
                                 <p class="subtitle is-6 article-subtitle">
                                     <a href="#">{{ post.user.name }}</a> on
-                                    {{ new Date(post.CreatedAt) }}
+                                    {{ new Date(post.created_at) }}
                                 </p>
                             </div>
                         </div>
@@ -49,7 +49,7 @@ export default {
             return post => !!post.user.avatar;
         },
         authorAvatar() {
-            return post => process.env.BASE_URL + post.user.avatar;
+            return post => "http://localhost:8000/" + post.user.avatar;
         }
     },
     async asyncData({ params, app, store }) {

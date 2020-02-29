@@ -13,11 +13,15 @@ type Reminder struct {
 
 //RevokeReminderToken is used to delete the associated record for the passed reminder.
 func (reminder *Reminder) RevokeReminderToken() error {
+    defer db.Close()
+
     return db.Delete(&reminder).Error
 }
 
 //ByReminderToken function is used to fetch the record by the token passed.
 func ByReminderToken(token string) (*Reminder, error) {
+    defer db.Close()
+
     var reminder Reminder
     err := db.Where("token = ?", token).First(&reminder).Error
     if err != nil {
@@ -32,6 +36,8 @@ func (user *User) GenerateReminderToken() (*Reminder, error) {
         UserID: user.ID,
         Token:  utils.GenerateRandomString(32),
     }
+    defer db.Close()
+
     err := db.Create(&reminder).Error
     return reminder, err
 }

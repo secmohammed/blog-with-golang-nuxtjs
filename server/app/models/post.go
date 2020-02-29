@@ -15,13 +15,17 @@ type Posts []Post
 // GetAllPosts is used to fetch all of the posts.
 func GetAllPosts() (Posts, error) {
     var posts Posts
+    defer db.Close()
     err := db.Preloads("User").Find(&posts).Error
+
     return posts, err
 }
 
 // FindByTitle is used to retrieve the post by its id.
 func FindByTitle(title string) (*Post, error) {
     var post Post
+    defer db.Close()
+
     err := db.Where("title = ?", title).First(&post).Error
     return &post, err
 }
