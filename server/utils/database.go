@@ -23,6 +23,5 @@ var db, err = gorm.Open("postgres", psqlInfo)
 
 //GetDatabaseConnection function to return the current database connection.
 func GetDatabaseConnection() *gorm.DB {
-    db.LogMode(true)
-    return db
+    return db.LogMode(true).Set("gorm:auto_preload", true)
 }

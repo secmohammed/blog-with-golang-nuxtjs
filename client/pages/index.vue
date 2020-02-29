@@ -22,7 +22,7 @@
                                     {{ post.title }}
                                 </p>
                                 <p class="subtitle is-6 article-subtitle">
-                                    <a href="#">@angela</a> on
+                                    <a href="#">{{ post.user.name }}</a> on
                                     {{ new Date(post.CreatedAt) }}
                                 </p>
                             </div>
