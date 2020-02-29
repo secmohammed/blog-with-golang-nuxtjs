@@ -11,7 +11,8 @@
                         <div class="media">
                             <div class="media-center">
                                 <img
-                                    :src="authorAvatar"
+                                    v-if="authorHasAvatar(post)"
+                                    :src="authorAvatar(post)"
                                     class="author-image"
                                     alt="Placeholder image"
                                 />
@@ -44,8 +45,11 @@ export default {
         };
     },
     computed: {
-        authorAvatar(post) {
-            return process.env.BASE_URL + post.user.avatar;
+        authorHasAvatar() {
+            return post => !!post.user.avatar;
+        },
+        authorAvatar() {
+            return post => process.env.BASE_URL + post.user.avatar;
         }
     },
     async asyncData({ params, app, store }) {

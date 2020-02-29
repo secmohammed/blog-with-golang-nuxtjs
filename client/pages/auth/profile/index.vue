@@ -25,7 +25,7 @@
                   v-validate="'required|email'"
                   name="email"
                   type="email"
-                  placeholder="e.g. alex@codecourse.com"
+                  placeholder="e.g. mohammedosama@ieee.org"
                 />
                 <p v-if="errors.has('email')" class="is-danger has-text-danger">
                   {{ errors.first("email") }}

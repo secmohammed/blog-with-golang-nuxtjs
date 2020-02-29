@@ -22,7 +22,7 @@ type User struct {
     Password string `json:"password"`
     Token    string `json:"token" ;sql:"-"`
     Avatar   string `json:"avatar"`
-    Posts    Posts
+    Posts    Posts  `json:"posts"`
 }
 
 //Create function is used to create a users record

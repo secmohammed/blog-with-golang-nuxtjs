@@ -10,7 +10,7 @@ type Post struct {
     Title  string `json:"title"`
     Body   string `json:"body"`
     UserID uint
-    User   User `gorm:"foreignKey:UserID; association_foreignKey:UserID"`
+    User   User `gorm:"foreignKey:UserID; association_foreignKey:UserID" json:"user"`
 }
 
 // Posts are collection of post type.
