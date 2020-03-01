@@ -22,7 +22,14 @@
                                     {{ post.title }}
                                 </p>
                                 <p class="subtitle is-6 article-subtitle">
-                                    <a href="#">{{ post.user.name }}</a> on
+                                    <nuxt-link
+                                        :to="{
+                                            name: 'auth-profile-id',
+                                            params: { id: post.user.id }
+                                        }"
+                                        >{{ post.user.name }}</nuxt-link
+                                    >
+                                    on
                                     {{ new Date(post.created_at) }}
                                 </p>
                             </div>

@@ -12,6 +12,9 @@ export const getters = {
 export const mutations = {
     SET_POSTS(state, payload) {
         state.posts = payload;
+    },
+    UNSET_POST_FROM_POSTS(state, title) {
+        state.posts = state.posts.filter(post => post.title !== title);
     }
 };
 export const actions = {
@@ -20,5 +23,14 @@ export const actions = {
             commit("SET_POSTS", response);
             return response;
         });
+    },
+    destroyPost({ commit }, title) {
+        return this.$axios
+            .$delete(`posts/${title}`)
+            .then(response => {
+                commit("UNSET_POST_FROM_POSTS", title);
+                return response;
+            })
+            .catch(err => err);
     }
 };

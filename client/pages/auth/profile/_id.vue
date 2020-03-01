@@ -75,6 +75,7 @@
               <a
                 class="card-footer-item"
                 v-if="authenticated && user.id === post.user_id"
+                @click.prevent="removePost(post.title)"
                 >Delete</a
               >
             </footer>
@@ -86,6 +87,7 @@
   </div>
 </template>
 <script>
+import { mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -107,6 +109,17 @@ export default {
     },
     authorAvatar() {
       return "http://localhost:8000/" + this.profile.user.avatar;
+    }
+  },
+  methods: {
+    ...mapActions("post", {
+      destroyPost: "destroyPost"
+    }),
+    removePost(title) {
+      this.destroyPost(title);
+      this.profile.posts = this.profile.posts.filter(
+        post => title != post.title
+      );
     }
   }
 };

@@ -45,6 +45,7 @@ func RegisterAPIRoutes() {
     c := cors.New(cors.Options{
         AllowedOrigins:   []string{"http://localhost:3000"},
         AllowedHeaders:   []string{"Authorization", "Content-Type"},
+        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
         AllowCredentials: true,
         // Enable Debugging for testing, consider disabling in production
         Debug: true,
