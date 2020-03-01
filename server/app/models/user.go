@@ -23,6 +23,12 @@ type User struct {
     Avatar   string `json:"avatar"`
 }
 
+// UserWithPosts type to associate the user with its own posts.
+type UserWithPosts struct {
+    User
+    Posts
+}
+
 //Create function is used to create a users record
 func (user *User) Create() (*User, error) {
 

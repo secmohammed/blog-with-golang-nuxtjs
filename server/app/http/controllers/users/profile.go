@@ -69,12 +69,18 @@ func Show(w http.ResponseWriter, r *http.Request) {
         return
     }
     user, err := models.ByID(uint(userID))
-    user.Password = ""
-    user.Token = ""
     if err != nil {
-        utils.Respond(w, utils.Message(false, err.Error()))
+        utils.Respond(w, utils.Message(false, "Couldn't find this user"))
         return
     }
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(user)
+    posts, err := models.GetAllPosts()
+    if err != nil {
+        utils.Respond(w, utils.Message(false, err.Error()))
+    }
+    data := map[string]interface{}{
+        "user":  user,
+        "posts": posts,
+    }
+    w.Header().Add("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(data)
 }
