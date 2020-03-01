@@ -18,7 +18,7 @@ type User struct {
     BaseGorm
     Name     string `json:"name"`
     Email    string `json:"email"`
-    Password string `json:"-"`
+    Password string
     Token    string `json:"token"`
     Avatar   string `json:"avatar"`
 }
