@@ -1,7 +1,9 @@
 package users
 
 import (
+    "context"
     "encoding/json"
+    "fmt"
     "net/http"
 
     "go-auth-with-crud-api/server/app/http/requests"
@@ -10,12 +12,17 @@ import (
     "go-auth-with-crud-api/server/utils"
 
     "github.com/gorilla/mux"
+    "github.com/jinzhu/gorm"
 )
+
+var db *gorm.DB = utils.GetDatabaseConnection()
 
 //ParseLoginForm to parse the login form when submitted.
 func ParseLoginForm(w http.ResponseWriter, r *http.Request) {
+    defer db.Close()
     user := &models.User{}
     err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
+    fmt.Println(user)
     if err != nil {
         utils.Respond(w, utils.Message(false, "Invalid request"))
         return
@@ -45,8 +52,32 @@ func ParseLoginForm(w http.ResponseWriter, r *http.Request) {
     utils.Respond(w, response)
 }
 
+//LogoutAuthenticatedUser is used to flush the user's context.
+func LogoutAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
+    defer db.Close()
+    userID := r.Context().Value(utils.ContextKeyAuthToken).(uint)
+    user, err := models.ByID(userID)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, "Couldn't retrieve the user through token."))
+        return
+    }
+    user.Token = ""
+    err = models.Update(user)
+    if err != nil {
+        utils.Respond(w, utils.Message(false, "Couldn't flush user token."))
+        return
+    }
+
+    _, cancel := context.WithCancel(r.Context())
+    defer cancel()
+    utils.Respond(w, utils.Message(false, "Logged out successfully."))
+
+}
+
 //GetAuthenticatedUser is used to retrieve the authenticated user via token.
 func GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
+    defer db.Close()
+
     userID := r.Context().Value(utils.ContextKeyAuthToken).(uint)
     user, err := models.ByID(userID)
     if err != nil {
@@ -59,6 +90,8 @@ func GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
 //ParseResetPassword function is used to change password for the associated user that we will
 // retrieve through token and then update the password.
 func ParseResetPassword(w http.ResponseWriter, r *http.Request) {
+    defer db.Close()
+
     var form requests.ResetPasswordFormRequest
     err := json.NewDecoder(r.Body).Decode(&form)
     token := mux.Vars(r)["token"]
@@ -104,6 +137,8 @@ func ParseResetPassword(w http.ResponseWriter, r *http.Request) {
 
 //ParseForgetPasswordForm is used to parse the user's email and send an email.
 func ParseForgetPasswordForm(w http.ResponseWriter, r *http.Request) {
+    defer db.Close()
+
     var form requests.ForgetPasswordFormRequest
     err := json.NewDecoder(r.Body).Decode(&form)
     if err != nil {
@@ -133,6 +168,8 @@ func ParseForgetPasswordForm(w http.ResponseWriter, r *http.Request) {
 
 //ParseChangePasswordForm is used to parse the user's password.
 func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
+    defer db.Close()
+
     var form requests.ChangePasswordFormRequest
     err := json.NewDecoder(r.Body).Decode(&form) //decode the request body into struct and failed if any error occur
     if err != nil {
@@ -166,6 +203,8 @@ func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
 
 //ActivateRegisteredAccount function is used to activate the account through out the passed token.
 func ActivateRegisteredAccount(w http.ResponseWriter, r *http.Request) {
+    defer db.Close()
+
     token := mux.Vars(r)["token"]
     if len(token) != 32 {
         utils.Respond(w, utils.Message(false, "Invalid Token format."))
@@ -188,6 +227,7 @@ func ActivateRegisteredAccount(w http.ResponseWriter, r *http.Request) {
 
 //ParseRegisterForm to parse the registration form when submitted.
 func ParseRegisterForm(w http.ResponseWriter, r *http.Request) {
+    defer db.Close()
 
     user := &models.User{}
     err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur

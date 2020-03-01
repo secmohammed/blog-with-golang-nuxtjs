@@ -37,6 +37,7 @@ func RegisterAPIRoutes() {
     userAuthArea := router.PathPrefix("/api/auth").Subrouter()
     userAuthArea.Use(middlewares.Authenticate)
     userAuthArea.HandleFunc("/user", users.GetAuthenticatedUser).Methods("GET")
+    userAuthArea.HandleFunc("/logout", users.LogoutAuthenticatedUser).Methods("POST")
     userAuthArea.HandleFunc("/profile", users.Update).Methods("POST")
     userAuthArea.HandleFunc("/change-password", users.ParseChangePasswordForm).Methods("POST")
     userPublicArea := router.PathPrefix("/api/users").Subrouter()

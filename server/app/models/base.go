@@ -32,21 +32,15 @@ var (
 
 // Update will update the provided struct with all of the data passed through the struct object.
 func Update(dst interface{}) error {
-    defer db.Close()
-
     return db.Save(dst).Error
 }
 
 // Create will create the provided struct with all of the passed data.
 func Create(dst interface{}) error {
-    defer db.Close()
-
     return db.Create(dst).Error
 }
 
 // Delete will delete the provided struct.
 func Delete(dst interface{}, key, value string) error {
-    defer db.Close()
-
     return db.Where(key+" = ?", value).Delete(dst).Error
 }

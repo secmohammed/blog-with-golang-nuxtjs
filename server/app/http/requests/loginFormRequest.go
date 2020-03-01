@@ -11,9 +11,8 @@ func IsSubmittedLoginFormValid(user *models.User) (map[string]interface{}, bool)
     if !strings.Contains(user.Email, "@") {
         return utils.Message(false, "Email address is required"), false
     }
-
     if len(user.Password) < 6 {
-        return utils.Message(false, "Password is required"), false
+        return utils.Message(false, "Password is less than 6 characters"), false
     }
 
     return utils.Message(false, "Requirement passed"), true
