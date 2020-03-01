@@ -20,6 +20,11 @@ export const mutations = {
     state.user = payload;
     state.loggedIn = true;
     state.token = payload.token;
+  },
+  UNSET_USER(state) {
+    state.user = null;
+    state.loggedIn = false;
+    state.token = null;
   }
 };
 export const actions = {
@@ -74,6 +79,17 @@ export const actions = {
           name: payload.name
         })
         .then(res => resolve(res.user))
+        .catch(err => reject(err));
+    });
+  },
+  logout({ commit }) {
+    return new Promise((resolve, reject) => {
+      this.$axios
+        .$post("auth/logout")
+        .then(res => {
+          commit("UNSET_USER");
+          resolve(res);
+        })
         .catch(err => reject(err));
     });
   },

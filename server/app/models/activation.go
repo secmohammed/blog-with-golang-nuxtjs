@@ -15,7 +15,6 @@ type Activation struct {
 // ByUserID function is used to fetch the record by the user id.
 func ByUserID(id uint) (*Activation, error) {
     var activation Activation
-    defer db.Close()
 
     err := db.Where("user_id = ?", id).First(&activation).Error
     if err != nil {
@@ -27,7 +26,6 @@ func ByUserID(id uint) (*Activation, error) {
 //ByActivationToken function is used to fetch the record by the token passed.
 func ByActivationToken(token string) (*Activation, error) {
     var activation Activation
-    defer db.Close()
 
     err := db.Where("token = ?", token).First(&activation).Error
     if err != nil {
@@ -39,8 +37,6 @@ func ByActivationToken(token string) (*Activation, error) {
 //IsActivated function is used to check on the user if activated or not.
 func (user *User) IsActivated() (bool, error) {
     var activation Activation
-    defer db.Close()
-
     err := db.Where("user_id = ? ", user.ID).First(&activation).Error
     if err != nil {
         return false, err
@@ -55,7 +51,6 @@ func (user *User) IsActivated() (bool, error) {
 func (activation *Activation) Activate() (*Activation, error) {
     activation.Token = ""
     activation.Active = true
-    defer db.Close()
 
     err := db.Save(&activation).Error
     if err != nil {
@@ -70,8 +65,6 @@ func (user *User) GenerateActivationToken() (*Activation, error) {
         UserID: user.ID,
         Token:  utils.GenerateRandomString(32),
     }
-    defer db.Close()
-
     err := db.Create(&activation).Error
     return activation, err
 }

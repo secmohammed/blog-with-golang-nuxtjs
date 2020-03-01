@@ -28,6 +28,9 @@
             >
               Change Your Password
             </nuxt-link>
+            <a class="navbar-item" @click.prevent="logout">
+              Logout
+            </a>
             <nuxt-link :to="{ name: 'auth-profile' }" class="navbar-item">
               Update Your profile
             </nuxt-link>
@@ -38,5 +41,17 @@
   </nav>
 </template>
 <script>
-export default {};
+import { mapActions, mapGetters } from "vuex";
+
+export default {
+  methods: {
+    logout() {
+      this.$store.dispatch("auth/logout").then(() => {
+        this.$router.replace({
+          name: "auth-login"
+        });
+      });
+    }
+  }
+};
 </script>

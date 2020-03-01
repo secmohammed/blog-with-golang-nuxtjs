@@ -19,7 +19,6 @@ var db *gorm.DB = utils.GetDatabaseConnection()
 
 //ParseLoginForm to parse the login form when submitted.
 func ParseLoginForm(w http.ResponseWriter, r *http.Request) {
-    defer db.Close()
     user := &models.User{}
     err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
     fmt.Println(user)
@@ -54,7 +53,6 @@ func ParseLoginForm(w http.ResponseWriter, r *http.Request) {
 
 //LogoutAuthenticatedUser is used to flush the user's context.
 func LogoutAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
-    defer db.Close()
     userID := r.Context().Value(utils.ContextKeyAuthToken).(uint)
     user, err := models.ByID(userID)
     if err != nil {
@@ -76,7 +74,6 @@ func LogoutAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
 
 //GetAuthenticatedUser is used to retrieve the authenticated user via token.
 func GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
-    defer db.Close()
 
     userID := r.Context().Value(utils.ContextKeyAuthToken).(uint)
     user, err := models.ByID(userID)
@@ -90,7 +87,6 @@ func GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) {
 //ParseResetPassword function is used to change password for the associated user that we will
 // retrieve through token and then update the password.
 func ParseResetPassword(w http.ResponseWriter, r *http.Request) {
-    defer db.Close()
 
     var form requests.ResetPasswordFormRequest
     err := json.NewDecoder(r.Body).Decode(&form)
@@ -137,7 +133,6 @@ func ParseResetPassword(w http.ResponseWriter, r *http.Request) {
 
 //ParseForgetPasswordForm is used to parse the user's email and send an email.
 func ParseForgetPasswordForm(w http.ResponseWriter, r *http.Request) {
-    defer db.Close()
 
     var form requests.ForgetPasswordFormRequest
     err := json.NewDecoder(r.Body).Decode(&form)
@@ -168,7 +163,6 @@ func ParseForgetPasswordForm(w http.ResponseWriter, r *http.Request) {
 
 //ParseChangePasswordForm is used to parse the user's password.
 func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
-    defer db.Close()
 
     var form requests.ChangePasswordFormRequest
     err := json.NewDecoder(r.Body).Decode(&form) //decode the request body into struct and failed if any error occur
@@ -203,7 +197,6 @@ func ParseChangePasswordForm(w http.ResponseWriter, r *http.Request) {
 
 //ActivateRegisteredAccount function is used to activate the account through out the passed token.
 func ActivateRegisteredAccount(w http.ResponseWriter, r *http.Request) {
-    defer db.Close()
 
     token := mux.Vars(r)["token"]
     if len(token) != 32 {
@@ -227,7 +220,6 @@ func ActivateRegisteredAccount(w http.ResponseWriter, r *http.Request) {
 
 //ParseRegisterForm to parse the registration form when submitted.
 func ParseRegisterForm(w http.ResponseWriter, r *http.Request) {
-    defer db.Close()
 
     user := &models.User{}
     err := json.NewDecoder(r.Body).Decode(user) //decode the request body into struct and failed if any error occur
