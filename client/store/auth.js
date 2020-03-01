@@ -101,8 +101,12 @@ export const actions = {
           password: payload.password
         })
         .then(res => {
-          commit("SET_USER", res.user);
-          resolve(res.user);
+          if (res.status) {
+            commit("SET_USER", res.user);
+            resolve(res.user);
+          } else {
+            resolve(res);
+          }
         })
         .catch(err => reject(err));
     });

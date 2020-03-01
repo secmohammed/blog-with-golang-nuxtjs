@@ -76,15 +76,21 @@ export default {
   },
   methods: {
     login() {
-      this.$store.dispatch("auth/login", this.form).then(() => {
-        if (this.$route.query.redirect) {
-          this.$router.replace(this.$route.query.redirect);
-          return;
-        }
-        this.$router.replace({
-          name: "index"
+      this.$store
+        .dispatch("auth/login", this.form)
+        .then(({ message, status }) => {
+          if (!status) {
+            this.$toast.error(message);
+            return;
+          }
+          if (this.$route.query.redirect) {
+            this.$router.replace(this.$route.query.redirect);
+            return;
+          }
+          this.$router.replace({
+            name: "index"
+          });
         });
-      });
     }
   }
 };
